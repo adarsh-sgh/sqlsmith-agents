@@ -1,0 +1,7 @@
+dspy==2.6.27
+anthropic>=0.125
+pandas>=2.2
+scikit-learn>=1.6
+torch>=2.2
+mlflow>=3.0
+pytest>=8
