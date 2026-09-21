@@ -63,7 +63,11 @@ class SklearnRouter:
         return self
 
     def predict(self, question):
-        return str(self.pipe.predict([question])[0])
+        return self.predict_many([question])[0]
+
+    def predict_many(self, questions):
+        """One vectorised call for a batch; this is what the serving micro-batcher uses."""
+        return [str(y) for y in self.pipe.predict(list(questions))]
 
 
 class TorchRouter:
@@ -92,8 +96,11 @@ class TorchRouter:
         return self
 
     def predict(self, question):
+        return self.predict_many([question])[0]
+
+    def predict_many(self, questions):
         with torch.no_grad():
-            return LABELS[int(self.model(self._x([question])).argmax())]
+            return [LABELS[int(i)] for i in self.model(self._x(list(questions))).argmax(dim=1)]
 
 
 BACKENDS = {"sklearn": SklearnRouter, "torch": TorchRouter}
